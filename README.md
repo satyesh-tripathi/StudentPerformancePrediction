@@ -29,7 +29,6 @@ Defense Presentation: Located in Documentation/Presentation_Deck.pdf.
 
 Engineering Logs: Please refer to the Documentation/ folder for decision.md (Engineering Log) and task.md (Project Tracker).
 
-## 🚀 How to Run Locally
-1. **Install Dependencies:**
-   ```bash
-   pip install -r Streamlit_App/requirements.txt
+## 🚀 How to Run
+1. Install requirements: pip install -r Streamlit_App/requirements.txt
+2. Launch the app: streamlit run Streamlit_App/app.py
