@@ -1,4 +1,4 @@
-streamlit run Streamlit_App/app.pyimport pandas as pd
+import pandas as pd
 import numpy as np
 import joblib
 from pathlib import Path
