@@ -4,12 +4,17 @@ The model finds patterns in the dataset; these are associations, not guarantees.
 a student can change are offered. Age, sex, family, parents, past failures, `schoolsup`
 (confounded, see D-009), `higher` and `internet` are excluded.
 
-Validated against all 649 students in Dataset/student_mat_features.csv (see decision D-010):
-- study time (+1 band) and weekday alcohol (down to 1) give a consistent positive signal.
-- absences, going out, weekend alcohol and activities averaged about 0 with mixed signs, so
-  they are NOT offered as advice even though they are plausible-sounding habits.
-- predicted gains of 2 points or more equal the model's typical error and were seen only as
-  tree-model artifacts, so they are hidden.
+Validated on all 395 Math-course students with the saved model (decision D-011). Rule, fixed
+before looking at results: offer a habit only if its average predicted gain is at least 0.15
+points AND at least 70% of the students it applies to gain.
+    study time +1 band     mean +0.37, 94% gain    -> offered
+    going out one notch    mean +0.15, 74% gain    -> offered
+    weekday alcohol to 1   mean +0.18, 81% gain    -> offered
+    halving absences       mean +0.10, 67% gain    -> not offered
+    weekend alcohol -1     mean +0.04, 76% gain but near zero -> not offered
+    extracurricular        mean -0.20, 25% gain    -> not offered (negative)
+Per student, gains under 0.3 points are hidden and gains of 2+ points (one case) are treated
+as model artifacts.
 """
 from dataclasses import dataclass
 
@@ -17,7 +22,7 @@ from model_io import predict_rows
 
 MIN_GAIN = 0.3  # points; smaller predicted gains are not worth showing
 MAX_GAIN = 2.0  # points; larger ones are treated as model artifacts
-MAX_MOVES = 2
+MAX_MOVES = 3
 
 
 @dataclass(frozen=True)
@@ -30,12 +35,17 @@ def _studytime(f):
     return {"studytime": f["studytime"] + 1} if f["studytime"] < 4 else {}
 
 
+def _goout(f):
+    return {"goout": f["goout"] - 1} if f["goout"] > 1 else {}
+
+
 def _weekday_alcohol(f):
     return {"Dalc": 1} if f["Dalc"] > 1 else {}
 
 
 LEVERS = [
     Lever("studytime", _studytime),
+    Lever("goout", _goout),
     Lever("Dalc", _weekday_alcohol),
 ]
 

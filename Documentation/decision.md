@@ -273,7 +273,7 @@ skipped answers use typical values), then results: a likely range using the meas
 typical error (about 2 points), the habits worth changing, what shaped the estimate, and a
 live what-if. No red or alarm wording; the morning-light background grows with progress and
 with the estimated grade.
-**Advice method:** Each habit was tested on all 649 rows by changing only that habit and
+**Advice method (numbers superseded by D-011, which repeats this on the correct Math data):** Each habit was tested on all 649 Portuguese-course rows by changing only that habit and
 re-predicting. Study time (+1 band) and weekday alcohol (down to 1) show a consistent
 positive effect and are offered. Absences, going out, weekend alcohol and activities
 averaged about 0 with mixed signs and are not offered. Gains under 0.3 points are hidden,
@@ -285,3 +285,28 @@ specific advice, so the app offers only what held up and says when there is noth
 **Future Impact:** 43% of students see no recommended habit change; the results page has an
 honest state for that. Code is split into `model_io.py`, `levers.py`, `theme.py`, `views.py`
 and `app.py` under `Streamlit_App/`. See ISS-004 (dataset mismatch) and ISS-005.
+
+---
+
+### D-011 — Dataset Confirmed as Math; Model Retrained; App Numbers Corrected
+**Date:** 2026-10-12
+**Problem:** `Dataset/student-mat.csv` was the Portuguese course (649 rows), not the Math
+course (395 rows) that D-005/D-006, the report and the deck describe (see ISS-004). The app
+built under D-010 used that model's numbers (typical error about 2 points, 649 students).
+**Options:** Keep the Portuguese data and fix the documents, or restore the Math data and
+retrain.
+**Final Decision:** The owner confirmed Math. The official Math file was restored, the
+Portuguese file kept as `Dataset/student-por.csv` (unused, per D-006), and the pipeline
+(`src/data_cleaning.py`, `feature_engineering.py`, `hyperparameter_tuning.py`) was rerun.
+**Results (Math, G1/G2 excluded):** same best parameters as before (learning rate 0.05,
+max depth 4, 50 trees, subsample 0.8). Held-out test: MAE 3.21, RMSE 3.92, R2 0.251. 5-fold CV over
+5 seeds: MAE 2.98, RMSE 3.91, R2 0.27; about 62% of predictions within 3 points; without the 38
+students who scored 0 (did not sit the exam) MAE is about 2.6.
+**App changes:** typical error shown as about 3 points (range is estimate plus or minus 3),
+the dataset size shown as 395, the typical-student reference values recomputed (activities 1,
+absences 4), and the habit levers re-validated with a rule fixed beforehand: offer a habit only
+if its mean predicted gain is at least 0.15 points and at least 70% of applicable students
+gain. Offered: study time, going out less, weekday alcohol. Not offered: absences (+0.10, 67%),
+weekend alcohol (+0.04) and activities (negative). 39% of students see no recommended change.
+**Future Impact:** Any figure in the report or deck that came from the Portuguese data must
+be rechecked against the numbers above. The deck's headline numbers already match the Math run.

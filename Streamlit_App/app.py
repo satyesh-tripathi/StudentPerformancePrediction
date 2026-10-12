@@ -18,7 +18,7 @@ for key, value in DEFAULTS.items():
     st.session_state[key] = st.session_state.get(key, value)
 for key, value in {"stage": "welcome", "step": 0, "skipped": False}.items():
     st.session_state.setdefault(key, value)
-for key in ("play_study", "play_dalc"):
-    st.session_state[key] = st.session_state.get(key, DEFAULTS["studytime" if key == "play_study" else "Dalc"])
+for key, source in {"play_study": "studytime", "play_goout": "goout", "play_dalc": "Dalc"}.items():
+    st.session_state[key] = st.session_state.get(key, DEFAULTS[source])
 
 {"welcome": welcome, "questions": questions, "results": results}[st.session_state["stage"]]()

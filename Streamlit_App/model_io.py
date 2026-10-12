@@ -8,21 +8,22 @@ import streamlit as st
 
 MODEL_PATH = Path(__file__).resolve().parent.parent / "Model" / "student_performance_best_model.pkl"
 
-# Measured with 5-fold cross-validation of the saved pipeline on the 649 rows in
-# Dataset/student_mat_features.csv (previous-period grades excluded, per decision D-006).
-DATASET_SIZE = 649
-TYPICAL_ERROR = 2.0
-CV_R2 = 0.26
+# Measured with 5-fold cross-validation (5 seeds) of the saved pipeline on the 395 Math-course rows in
+# Dataset/student_mat_features.csv (previous-period grades excluded, per decision D-006):
+# MAE 2.98, RMSE 3.91, R2 0.27; about 62% of predictions land within 3 points.
+DATASET_SIZE = 395
+TYPICAL_ERROR = 3.0
+CV_R2 = 0.27
 PASS_MARK = 10
 ABSENCE_CAP = 20  # D-007: absences are capped at the IQR upper bound in training
 
-# Median student in Dataset/student_mat_features.csv. Used as the "typical student"
+# Median student in Dataset/student_mat_features.csv (Math course, 395 rows). Used as the "typical student"
 # reference when working out what moved a prediction.
 REFERENCE = {
     "sex_F": 1, "age": 17, "famsize_GT3": 1, "traveltime": 1, "studytime": 2,
-    "failures": 0, "schoolsup": 0, "famsup": 1, "activities": 0, "higher": 1,
+    "failures": 0, "schoolsup": 0, "famsup": 1, "activities": 1, "higher": 1,
     "internet": 1, "romantic": 0, "famrel": 4, "freetime": 3, "goout": 3,
-    "Dalc": 1, "Walc": 2, "health": 4, "absences": 2, "Mjob_health": 0,
+    "Dalc": 1, "Walc": 2, "health": 4, "absences": 4, "Mjob_health": 0,
     "Mjob_other": 0, "Mjob_services": 0, "Fjob_other": 1, "Fjob_teacher": 0,
     "reason_reputation": 0, "guardian_mother": 1, "guardian_other": 0,
     "parental_edu_avg": 2.5,
@@ -56,11 +57,11 @@ STUDENT_FACTORS = [
 
 DEFAULTS = {
     "age": 17, "sex": "F", "famsize": "GT3", "studytime": 2, "failures": 0,
-    "traveltime": 1, "absences": 2, "higher": True, "Medu": 3, "Fedu": 2,
+    "traveltime": 1, "absences": 4, "higher": True, "Medu": 3, "Fedu": 2,
     "famrel": 4, "Mjob": "other", "Fjob": "other", "guardian": "mother",
     "schoolsup": False, "famsup": True, "internet": True, "reason": "course",
     "freetime": 3, "goout": 3, "health": 4, "Dalc": 1, "Walc": 2,
-    "activities": False, "romantic": False,
+    "activities": True, "romantic": False,
 }
 
 PRESETS = {

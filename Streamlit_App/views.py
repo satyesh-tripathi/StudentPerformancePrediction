@@ -21,6 +21,7 @@ def go(stage: str, step: int = 0):
     if stage == "results":
         st.session_state["play_study"] = st.session_state["studytime"]
         st.session_state["play_dalc"] = st.session_state["Dalc"]
+        st.session_state["play_goout"] = st.session_state["goout"]
 
 
 def use_example(name: str):
@@ -199,6 +200,8 @@ def move_text(key: str, feats: dict) -> str:
     if key == "studytime":
         cur = int(feats["studytime"])
         return f"Aim to study {STUDY_LABELS[cur + 1].lower()} a week, up from {STUDY_LABELS[cur].lower()}"
+    if key == "goout":
+        return "Go out with friends a little less"
     return "Cut back on drinking on school days"
 
 
@@ -263,14 +266,14 @@ def results():
             st.caption(f"Both together: up to about +{min(joint, MAX_GAIN):.1f} points.")
     elif has_applicable(feats):
         st.markdown(html("""
-            <div class="calm-box">The data doesn't show a clear grade gain from changing your study time or school-day
-            drinking. Grades depend on a lot a model can't see, like how you learn and the help you get. If a subject feels
+            <div class="calm-box">The data doesn't show a clear grade gain from changing your study time, time out with
+            friends or school-day drinking. Grades depend on a lot a model can't see, like how you learn and the help you get. If a subject feels
             hard, a teacher or someone you trust is a better next step than a number.</div>
         """), unsafe_allow_html=True)
     else:
         st.markdown(html("""
-            <div class="calm-box">You're already in the top study band with no school-day drinking, the two habits the
-            data links most reliably with better grades. Keep your routine steady.</div>
+            <div class="calm-box">You're already in the top study band, going out little and not drinking on school days. Those are
+            the habits the data links most reliably with better grades. Keep your routine steady.</div>
         """), unsafe_allow_html=True)
 
     # --- What shaped it --------------------------------------------------------
@@ -295,10 +298,11 @@ def results():
     # --- Try it ----------------------------------------------------------------
     st.markdown('<h3 class="sec-title">Try a different week</h3>', unsafe_allow_html=True)
     st.markdown('<p class="sec-note">Move these and see how your range responds.</p>', unsafe_allow_html=True)
+    play_study = st.select_slider("Weekly study time", [1, 2, 3, 4], key="play_study", format_func=STUDY_LABELS.get)
     c1, c2 = st.columns(2)
-    play_study = c1.select_slider("Weekly study time", [1, 2, 3, 4], key="play_study", format_func=STUDY_LABELS.get)
+    play_goout = c1.slider("Time out with friends", 1, 5, key="play_goout", help="1 is very little, 5 is a lot")
     play_dalc = c2.slider("Drinking on school days", 1, 5, key="play_dalc", help="1 is none, 5 is a lot")
-    new_score = float(predict_rows([{**feats, "studytime": play_study, "Dalc": play_dalc}])[0])
+    new_score = float(predict_rows([{**feats, "studytime": play_study, "goout": play_goout, "Dalc": play_dalc}])[0])
     nl, nh = range_for(new_score)
     delta = new_score - score
     if abs(delta) < 0.3:
@@ -318,6 +322,7 @@ def results():
     st.markdown(html(f"""
         <p class="fine-print">This is an estimate from patterns in {DATASET_SIZE} students' school records. It's typically about
         {TYPICAL_ERROR:.0f} grade points off, and it explains roughly {CV_R2:.0%} of the differences between students. It deliberately
-        ignores earlier term grades, so it can be used before they exist. It can't know your teachers, your effort this week or
+        ignores earlier term grades, so it can be used before they exist. Students who skipped the final exam (a grade of 0)
+        are in the data and can't be foreseen; leaving them out, the typical error is about 2.6. It can't know your teachers, your effort this week or
         your plans. Use it as a prompt to think, not a prediction you have to live up to or down to.</p>
     """), unsafe_allow_html=True)
