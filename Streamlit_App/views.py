@@ -128,24 +128,59 @@ FIRST_OPTIONAL = 5
 # ---------------------------------------------------------------------------
 # Welcome
 # ---------------------------------------------------------------------------
+@st.cache_data
+def example_result():
+    """A real result for the default 'balanced week' student, shown on the welcome screen."""
+    feats = features_from_state(DEFAULTS)
+    score, _ = predict_with_drivers(feats)
+    moves, _ = best_moves(feats)
+    return score, moves, feats
+
+
 def welcome():
-    st.markdown(beam(0.45), unsafe_allow_html=True)
-    st.markdown(html(f"""
-        <p class="brand">Student Performance Predictor</p>
-        <div id="main" tabindex="-1"><h1 class="hero-title">Where is your term heading?</h1></div>
-        <p class="lede">Answer a few questions about how you study and live. Get a likely grade range, and the
-        habits that could move it.</p>
-        <ul class="promises">
-            <li>Takes about two minutes</li>
-            <li>Nothing you enter is saved</li>
-            <li>Built from the records of {DATASET_SIZE} real students</li>
-        </ul>
-    """), unsafe_allow_html=True)
-    st.button("Start", type="primary", key="start", on_click=go, args=("questions", 0))
-    st.markdown('<p class="small-note">Want to see how it works first? Try an example.</p>', unsafe_allow_html=True)
-    cols = st.columns(len(PRESETS))
-    for col, name in zip(cols, PRESETS):
-        col.button(name, key=f"ex_{name}", on_click=use_example, args=(name,), use_container_width=True)
+    # The welcome screen is a two-column layout, so it gets a wider page than the rest of the flow.
+    st.markdown(beam(0.45) + "<style>.block-container { max-width: 1120px; padding-top: max(3.2rem, 10vh); }</style>", unsafe_allow_html=True)
+    score, moves, feats = example_result()
+    low, high = range_for(score)
+    move_rows = "".join(
+        f'<div class="move"><span class="move-text">{move_text(k, feats)}</span><span class="move-gain">+{g:.1f}</span></div>'
+        for k, g in moves[:1]
+    )
+    left, right = st.columns([1.05, 1], gap="large", vertical_alignment="center")
+    with left:
+        st.markdown(html(f"""
+            <div id="main" tabindex="-1">
+                <h1 class="hero-title"><span class="ln">Student Performance</span><span class="ln">Predictor</span></h1>
+            </div>
+            <p class="hero-tagline">Where is your term heading?</p>
+            <p class="lede">Answer a few questions about how you study and live. Get a likely grade range, and the
+            habits that could move it.</p>
+            <ul class="promises">
+                <li>Takes about two minutes</li>
+                <li>Nothing you enter is saved</li>
+                <li>Built from the records of {DATASET_SIZE} real students</li>
+            </ul>
+        """), unsafe_allow_html=True)
+        st.button("Start", type="primary", key="start", on_click=go, args=("questions", 0))
+        st.markdown('<p class="small-note">Or try an example first.</p>', unsafe_allow_html=True)
+        cols = st.columns(len(PRESETS))
+        for col, name in zip(cols, PRESETS):
+            col.button(name, key=f"ex_{name}", on_click=use_example, args=(name,), use_container_width=True)
+    with right:
+        st.markdown(html(f"""
+            <section class="preview-card" aria-label="Example result">
+                <p class="preview-tag">An example result, for a student with a balanced week</p>
+                <div class="preview-num" aria-hidden="true">{int(round(score))}<span class="big-of">out of 20</span></div>
+                <p class="range-line">Most likely between {low} and {high}</p>
+                <div class="scale" aria-hidden="true">
+                    <span class="scale-range" style="left:{low / 20 * 100:.1f}%; width:{(high - low) / 20 * 100:.1f}%"></span>
+                    <span class="scale-pass"></span>
+                    <span class="scale-mark" style="left:{score / 20 * 100:.1f}%"></span>
+                </div>
+                <div class="scale-labels" aria-hidden="true"><span>0</span><span>10 is a pass</span><span>20</span></div>
+                {move_rows}
+            </section>
+        """), unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------------

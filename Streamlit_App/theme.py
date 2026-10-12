@@ -37,10 +37,13 @@ header[data-testid="stHeader"] { background: transparent; }
 /* Type */
 .brand { font-size: 16px; font-weight: 600; color: var(--slate); margin: 0 0 56px; letter-spacing: 0.01em; }
 h1.hero-title, h2.q-title, .big-num, .serif { font-family: 'Newsreader', Georgia, serif; }
-h1.hero-title { font-size: clamp(42px, 7vw, 66px); font-weight: 500; line-height: 1.04; letter-spacing: -0.02em; margin: 0 0 22px; padding: 0; }
+h1.hero-title { font-size: clamp(34px, 3.9vw, 52px); font-weight: 500; line-height: 1.04; letter-spacing: -0.025em; margin: 0 0 18px; padding: 0; }
+h1.hero-title .ln { display: block; }
+h1.hero-title > span:not(:first-child) { display: none; }  /* Streamlit's heading link icon */
+.hero-tagline { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.25; color: var(--leaf); margin: 0 0 16px; }
 #main:focus { outline: none; }
-.lede { font-size: 20px; line-height: 1.55; color: var(--slate); max-width: 44ch; margin: 0 0 30px; }
-.promises { list-style: none; margin: 26px 0 38px; padding: 0; display: grid; gap: 8px; font-size: 16px; color: var(--ink); }
+.lede { font-size: 18px; line-height: 1.55; color: var(--slate); max-width: 40ch; margin: 0 0 22px; }
+.promises { list-style: none; margin: 0 0 30px; padding: 0; display: grid; gap: 8px; font-size: 16px; color: var(--ink); }
 .promises li::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--sun); margin-right: 12px; }
 .small-note { font-size: 15px; color: var(--slate); margin: 34px 0 8px; }
 
@@ -74,6 +77,17 @@ button[data-testid="stBaseButton-tertiary"] { color: var(--slate); text-decorati
 
 [data-testid="stMarkdownContainer"] ul.promises, [data-testid="stMarkdownContainer"] ul.factors { padding-left: 0; margin-left: 0; width: 100%; }
 [data-testid="stMarkdownContainer"] ul.promises li, [data-testid="stMarkdownContainer"] ul.factors li { padding-left: 0; margin-left: 0; }
+
+/* Welcome: example result card */
+.preview-card { background: rgba(255, 255, 255, .72); border: 1.5px solid var(--fog); border-radius: 22px; padding: 28px 30px 24px; box-shadow: 0 28px 60px -30px rgba(23, 49, 58, .35); }
+.preview-tag { font-size: 15px; color: var(--slate); margin: 0 0 14px; }
+.preview-num { font-family: 'Newsreader', Georgia, serif; font-size: 92px; font-weight: 400; line-height: 1; letter-spacing: -0.03em; color: var(--ink); }
+.preview-card .range-line { font-size: 19px; margin: 6px 0 14px; }
+.preview-card .move, .preview-card .move:last-of-type { margin-top: 14px; padding: 14px 0 0; border-bottom: 0; }
+.preview-card .move-text { font-size: 17px; }
+.preview-card .move-gain { font-size: 26px; }
+
+.move-text, .band-line, .range-line { text-wrap: balance; }
 
 /* Results */
 .result-hero { margin: 0 0 8px; }
