@@ -1,8 +1,12 @@
-pandas
-numpy
-scikit-learn
-xgboost
-joblib
-streamlit
-matplotlib
-seaborn
+# Versions tested with Python 3.13.3.
+# scikit-learn and xgboost are pinned because the saved model in Model/ was
+# trained with them; other versions may fail to load it.
+pandas==3.0.3
+numpy==2.5.1
+scikit-learn==1.9.0
+xgboost==3.3.0
+joblib==1.5.3
+streamlit==1.59.1
+# Notebook only (Notebook/eda.ipynb)
+matplotlib==3.11.0
+seaborn==0.13.2

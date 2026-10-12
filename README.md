@@ -43,7 +43,7 @@ Documentation/   project.md, task.md, decision.md, issues.md,
 
 ## Run it
 
-Run everything from the project root (the folder containing this file).
+Run everything from the project root (the folder containing this file). Tested with Python 3.13; `requirements.txt` pins the exact package versions, and scikit-learn and xgboost must match because the saved model was trained with them.
 
 ```
 pip install -r requirements.txt
