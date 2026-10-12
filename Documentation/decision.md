@@ -1,5 +1,5 @@
 # DECISION.md — Student Performance Prediction System
-**Last Updated:** 2026-07-12
+**Last Updated:** 2026-10-12
 
 Every non-trivial engineering choice made on this project is logged here at the
 time it's made, not retroactively.
@@ -256,3 +256,32 @@ task.md with reasoning here.
 
 *(This log will continue to grow in Phases 6–10 — e.g., feature engineering
 choices, final model selection, and every rejected alternative along the way.)*
+
+---
+
+### D-010 — Student-Facing App: Audience, Flow and Advice Method
+**Date:** 2026-10-12
+**Problem:** The first Streamlit app (D-001) was a single long form aimed at teachers.
+The goal changed to a calm, inviting website that gets *students* to use the predictor
+and gives a result they can act on.
+**Options:** (a) one Streamlit app with a welcome, question flow and results;
+(b) a static landing page plus the Streamlit tool; (c) a custom web app with an API.
+**Final Decision:** (a), kept inside Streamlit per D-001. The answers decided audience
+(students, advice limited to habits they control) and architecture (one app).
+**Design:** Welcome, then eight short question screens (sensitive ones last and skippable;
+skipped answers use typical values), then results: a likely range using the measured
+typical error (about 2 points), the habits worth changing, what shaped the estimate, and a
+live what-if. No red or alarm wording; the morning-light background grows with progress and
+with the estimated grade.
+**Advice method:** Each habit was tested on all 649 rows by changing only that habit and
+re-predicting. Study time (+1 band) and weekday alcohol (down to 1) show a consistent
+positive effect and are offered. Absences, going out, weekend alcohol and activities
+averaged about 0 with mixed signs and are not offered. Gains under 0.3 points are hidden,
+and gains of 2+ points (the model's typical error) are treated as artifacts. `schoolsup`
+stays excluded because it is confounded (D-009). Family and background factors are never
+shown as things to change.
+**Reason:** A weak model (cross-validated R² about 0.26) cannot honestly support a long list of
+specific advice, so the app offers only what held up and says when there is nothing clear.
+**Future Impact:** 43% of students see no recommended habit change; the results page has an
+honest state for that. Code is split into `model_io.py`, `levers.py`, `theme.py`, `views.py`
+and `app.py` under `Streamlit_App/`. See ISS-004 (dataset mismatch) and ISS-005.
